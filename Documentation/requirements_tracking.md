@@ -29,11 +29,11 @@
 
 - [x] Apply the state design pattern for player state ([refactoring.guru](https://refactoring.guru/design-patterns/state))
 - [x] Apply the strategy design pattern for different strategies, possibly for enemies or projectiles ([refactoring.guru](https://refactoring.guru/design-patterns/strategy))
-- [ ] Apply the object pool design pattern to objects that are spawned in larger amounts, such as enemies or projectiles ([sourcemaking.com](https://sourcemaking.com/design_patterns/object_pool))
+- [x] Apply the object pool design pattern to objects that are spawned in larger amounts, such as enemies or projectiles ([sourcemaking.com](https://sourcemaking.com/design_patterns/object_pool))
 - [ ] Style you code according to the effective dart style guide ([dart.dev](https://dart.dev/effective-dart/style))
 
 ## Bonus Requirements
 
 - [ ] Demonstrate that you can use Forge2D to add physics
-- [ ] Demonstrate that you can use Oxygen to add ECS
+- [x] Demonstrate that you can use Oxygen to add ECS
 - [ ] Apply more design patterns
