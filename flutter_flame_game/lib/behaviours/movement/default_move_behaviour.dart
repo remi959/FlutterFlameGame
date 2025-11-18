@@ -13,8 +13,10 @@ class DefaultMoveBehaviour implements MoveBehaviour {
 
     if (state == CharacterState.movingLeft) {
       character.position.x -= moveSpeed * dt;
+      character.facingDirection = -1;
     } else if (state == CharacterState.movingRight) {
       character.position.x += moveSpeed * dt;
+      character.facingDirection = 1;
     }
   }
 }

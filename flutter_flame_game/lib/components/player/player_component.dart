@@ -52,8 +52,8 @@ class PlayerComponent extends CharacterBase {
 
   @override
   void performAttack() {
-    // Implement your player-specific attack here
-    print("Player attacking!");
+    // Implement player-specific attack here
+    
     // e.g., spawn projectile, play sound, play animation, etc.
   }
 }

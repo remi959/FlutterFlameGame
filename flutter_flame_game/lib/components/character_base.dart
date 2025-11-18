@@ -12,6 +12,8 @@ abstract class CharacterBase extends PositionComponent {
   /// Ground level for simple platforming logic.
   double groundY = 300;
 
+  int facingDirection = 1; // 1 = right, -1 = left
+
   /// All characters use Cubit-driven state (moving/jumping/attacking/etc)
   final CharacterCubit bloc;
 
