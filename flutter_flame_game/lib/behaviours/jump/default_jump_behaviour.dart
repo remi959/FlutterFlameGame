@@ -1,6 +1,5 @@
 import '../character_behaviour.dart';
 import '../../components/character_base.dart';
-import '../../states/character_state.dart';
 
 class DefaultJumpBehaviour implements JumpBehaviour {
   final double jumpForce;
@@ -13,14 +12,15 @@ class DefaultJumpBehaviour implements JumpBehaviour {
 
   @override
   void update(double dt, CharacterBase character) {
+    final state = character.bloc.state;
+
     // Apply gravity
     character.velocity.y += gravity * dt;
 
-    // Jump only if grounded
-    if (character.bloc.state == CharacterState.jumping &&
-        character.isOnGround) {
+    // Jump only if grounded and jump flag is set
+    if (state.isJumping && state.isOnGround) {
       character.velocity.y = jumpForce;
-      character.bloc.idle();
+      character.bloc.endJump(); // Clear jump flag
     }
 
     // Apply vertical movement
@@ -30,9 +30,9 @@ class DefaultJumpBehaviour implements JumpBehaviour {
     if (character.position.y >= character.groundY) {
       character.position.y = character.groundY;
       character.velocity.y = 0;
-      character.isOnGround = true;
+      character.bloc.setOnGround(true);
     } else {
-      character.isOnGround = false;
+      character.bloc.setOnGround(false);
     }
   }
 }

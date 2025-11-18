@@ -6,8 +6,16 @@ import 'bullet_pool.dart';
 class BulletMovementSystem extends ox.System {
   late final ox.Query _query;
   final BulletPool bulletPool;
+  final double gameWidth;
+  final double gameHeight;
+  final double offScreenBuffer; // How far off-screen before recycling
 
-  BulletMovementSystem(this.bulletPool);
+  BulletMovementSystem(
+    this.bulletPool, {
+    required this.gameWidth,
+    required this.gameHeight,
+    this.offScreenBuffer = 200,
+  });
 
   @override
   void init() {
@@ -35,8 +43,11 @@ class BulletMovementSystem extends ox.System {
       pos.x += vel.x * dt;
       pos.y += vel.y * dt;
 
-      // Basic bounds check: recycle when off-screen
-      if (pos.x < -200 || pos.x > 2000 || pos.y < -200 || pos.y > 1200) {
+      // Recycle when off-screen with buffer
+      if (pos.x < -offScreenBuffer || 
+          pos.x > gameWidth + offScreenBuffer || 
+          pos.y < -offScreenBuffer || 
+          pos.y > gameHeight + offScreenBuffer) {
         bulletPool.release(entity);
       }
     }

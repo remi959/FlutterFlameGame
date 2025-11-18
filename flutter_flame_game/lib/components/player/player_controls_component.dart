@@ -11,38 +11,43 @@ class PlayerControlsComponent extends Component with KeyboardHandler {
   bool onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
     final isKeyDown = event is KeyDownEvent;
 
-    // Jump control (check first so it works while moving)
-    if (isKeyDown &&
-        (event.logicalKey == LogicalKeyboardKey.arrowUp ||
-            event.logicalKey == LogicalKeyboardKey.keyW ||
-            event.logicalKey == LogicalKeyboardKey.space)) {
-      cubit.jump();
-      return true;
+    // Handle discrete actions (attack, jump)
+    if (isKeyDown) {
+      if (_isAttackKey(event.logicalKey)) {
+        cubit.startAttack();
+        return true;
+      }
+      if (_isJumpKey(event.logicalKey)) {
+        cubit.startJump();
+        return true;
+      }
     }
 
-    // Attack control
-    if (isKeyDown &&
-        (event.logicalKey == LogicalKeyboardKey.keyX ||
-            event.logicalKey == LogicalKeyboardKey.keyJ ||
-            event.logicalKey == LogicalKeyboardKey.enter)) {
-      cubit.attack();
-      return true;
-    }
-
-    // Movement controls - check continuously
-    if (keysPressed.contains(LogicalKeyboardKey.arrowLeft) ||
-        keysPressed.contains(LogicalKeyboardKey.keyA)) {
-      cubit.moveLeft();
-      return true;
-    } else if (keysPressed.contains(LogicalKeyboardKey.arrowRight) ||
-        keysPressed.contains(LogicalKeyboardKey.keyD)) {
-      cubit.moveRight();
-      return true;
-    } else {
-      // No movement keys pressed - go idle
-      cubit.idle();
-    }
-
+    // Handle continuous movement (based on currently pressed keys)
+    _updateMovement(keysPressed);
     return false;
+  }
+
+  bool _isAttackKey(LogicalKeyboardKey key) {
+    return key == LogicalKeyboardKey.keyX || key == LogicalKeyboardKey.enter;
+  }
+
+  bool _isJumpKey(LogicalKeyboardKey key) {
+    return key == LogicalKeyboardKey.arrowUp || key == LogicalKeyboardKey.space;
+  }
+
+  void _updateMovement(Set<LogicalKeyboardKey> keysPressed) {
+    final left = keysPressed.any((k) => 
+      k == LogicalKeyboardKey.arrowLeft || k == LogicalKeyboardKey.keyA);
+    final right = keysPressed.any((k) => 
+      k == LogicalKeyboardKey.arrowRight || k == LogicalKeyboardKey.keyD);
+
+    if (left && !right) {
+      cubit.setMovingLeft(true);
+    } else if (right && !left) {
+      cubit.setMovingRight(true);
+    } else {
+      cubit.stopMoving();
+    }
   }
 }

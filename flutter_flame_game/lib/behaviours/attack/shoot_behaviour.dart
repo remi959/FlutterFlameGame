@@ -1,6 +1,5 @@
 import '../character_behaviour.dart';
 import '../../components/character_base.dart';
-import '../../states/character_state.dart';
 import '../../ecs/bullet_pool.dart';
 import '../../ecs/bullet_components.dart';
 
@@ -24,14 +23,12 @@ class ShootBehaviour implements AttackBehaviour {
       return;
     }
 
-    if (character.bloc.state == CharacterState.attacking) {
-      // Let the character do its own attack animation / state change
-      character.performAttack();
+    final state = character.bloc.state;
 
-      // Actually fire a bullet via ECS + pool
+    if (state.isAttacking) {
       _fireBulletFromCharacter(character);
-
       _cooldownTimer = attackCooldown;
+      character.bloc.endAttack(); // Clear attack flag
     }
   }
 
@@ -39,18 +36,17 @@ class ShootBehaviour implements AttackBehaviour {
     final entity = bulletPool.acquire();
     if (entity == null) return;
 
-    final pos = entity.get<BulletPosition>()!.value;
-    final vel = entity.get<BulletVelocity>()!.value;
-    final active = entity.get<BulletActive>()!;
+    final pos = entity.get<BulletPosition>();
+    final vel = entity.get<BulletVelocity>();
+    final active = entity.get<BulletActive>();
+
+    if (pos == null || vel == null || active == null) return;
 
     final origin = character.position + character.size / 2;
-    pos.setFrom(origin);
-
-    // Shoot based on facing direction field
-    vel
+    pos.value.setFrom(origin);
+    vel.value
       ..x = bulletSpeed * character.facingDirection
       ..y = 0;
-
     active.value = true;
   }
 }

@@ -1,6 +1,5 @@
 import '../character_behaviour.dart';
 import '../../components/character_base.dart';
-import '../../states/character_state.dart';
 
 class DefaultAttackBehaviour implements AttackBehaviour {
   final double attackCooldown;
@@ -16,10 +15,12 @@ class DefaultAttackBehaviour implements AttackBehaviour {
       return;
     }
 
-    if (character.bloc.state == CharacterState.attacking) {
+    final state = character.bloc.state;
+
+    if (state.isAttacking) {
       character.performAttack();
       _cooldownTimer = attackCooldown;
-      character.bloc.idle();
+      character.bloc.endAttack(); // Clear attack flag
     }
   }
 }
