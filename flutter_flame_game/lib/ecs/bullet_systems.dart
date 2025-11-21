@@ -1,54 +1,64 @@
 import 'package:oxygen/oxygen.dart' as ox;
 import 'package:flutter/material.dart';
-import 'bullet_components.dart';
-import 'bullet_pool.dart';
 
-class BulletMovementSystem extends ox.System {
+import 'bullet_ecs_components.dart';
+import '../game/my_game.dart';
+
+class BulletSyncSystem extends ox.System {
   late final ox.Query _query;
-  final BulletPool bulletPool;
-  final double gameWidth;
-  final double gameHeight;
-  final double offScreenBuffer; // How far off-screen before recycling
-
-  BulletMovementSystem(
-    this.bulletPool, {
-    required this.gameWidth,
-    required this.gameHeight,
-    this.offScreenBuffer = 200,
-  });
 
   @override
   void init() {
     _query = createQuery([
-      ox.Has<BulletTag>(),
       ox.Has<BulletPosition>(),
-      ox.Has<BulletVelocity>(),
+      ox.Has<BulletBodyRef>(),
       ox.Has<BulletActive>(),
     ]);
   }
 
   @override
   void execute(double dt) {
-    for (final entity in _query.entities) {
-      final activeComp = entity.get<BulletActive>();
-      if (activeComp == null || !activeComp.value) continue;
+    for (final e in _query.entities) {
+      final active = e.get<BulletActive>()!;
+      if (!active.value) continue;
 
-      final posComp = entity.get<BulletPosition>();
-      final velComp = entity.get<BulletVelocity>();
-      if (posComp == null || velComp == null) continue;
+      final pos = e.get<BulletPosition>()!;
+      final bodyRef = e.get<BulletBodyRef>()!;
+      final bulletComp = bodyRef.body;
 
-      final pos = posComp.value;
-      final vel = velComp.value;
+      if (bulletComp == null || !bulletComp.isLoaded) continue;
 
-      pos.x += vel.x * dt;
-      pos.y += vel.y * dt;
+      pos.value.setFrom(bulletComp.body.position);
+    }
+  }
+}
 
-      // Recycle when off-screen with buffer
-      if (pos.x < -offScreenBuffer || 
-          pos.x > gameWidth + offScreenBuffer || 
-          pos.y < -offScreenBuffer || 
-          pos.y > gameHeight + offScreenBuffer) {
-        bulletPool.release(entity);
+class BulletLifetimeSystem extends ox.System {
+  late final ox.Query _query;
+
+  @override
+  void init() {
+    _query = createQuery([
+      ox.Has<BulletLifetime>(),
+      ox.Has<BulletActive>(),
+      ox.Has<BulletBodyRef>(),
+    ]);
+  }
+
+  @override
+  void execute(double dt) {
+    for (final e in _query.entities) {
+      final life = e.get<BulletLifetime>()!;
+      final active = e.get<BulletActive>()!;
+      final bodyRef = e.get<BulletBodyRef>()!;
+
+      if (!active.value) continue;
+
+      life.age += dt;
+      if (life.age > life.maxLifeTime) {
+        if (bodyRef.entity != null && bodyRef.pool != null) {
+          bodyRef.pool!.release(e);
+        }
       }
     }
   }
@@ -56,44 +66,31 @@ class BulletMovementSystem extends ox.System {
 
 class BulletRenderSystem extends ox.System {
   late final ox.Query _query;
+  final MyGame game;
+
+  BulletRenderSystem(this.game);
 
   @override
   void init() {
-    _query = createQuery([
-      ox.Has<BulletTag>(),
-      ox.Has<BulletPosition>(),
-      ox.Has<BulletActive>(),
-    ]);
-  }
-
-  /// Call this from your game's render method, passing the canvas
-  void renderBullets(Canvas canvas) {
-    final paint = Paint()
-      ..color = Colors.yellow
-      ..style = PaintingStyle.fill;
-
-    final glowPaint = Paint()
-      ..color = Colors.orange.withValues(alpha: 0.5);
-
-    for (final entity in _query.entities) {
-      final activeComp = entity.get<BulletActive>();
-      if (activeComp == null || !activeComp.value) continue;
-
-      final posComp = entity.get<BulletPosition>();
-      if (posComp == null) continue;
-
-      final pos = posComp.value;
-
-      // Draw glow
-      canvas.drawCircle(Offset(pos.x, pos.y), 8.0, glowPaint);
-      
-      // Draw bullet
-      canvas.drawCircle(Offset(pos.x, pos.y), 5.0, paint);
-    }
+    _query = createQuery([ox.Has<BulletPosition>(), ox.Has<BulletActive>()]);
   }
 
   @override
   void execute(double dt) {
-    // This system doesn't update per frame, only renders when called
+    // No update logic; rendering is done manually from ecs manager's render method
+  }
+
+  void render(Canvas canvas) {
+    final paint = Paint()..color = Colors.yellow;
+    const double radiusPixels = 4.0;
+
+    for (final e in _query.entities) {
+      final pos = e.get<BulletPosition>()!;
+      final active = e.get<BulletActive>()!;
+      if (!active.value) continue;
+
+      final screenPos = game.worldToScreen(pos.value);
+      canvas.drawCircle(Offset(screenPos.x, screenPos.y), radiusPixels, paint);
+    }
   }
 }

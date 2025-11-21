@@ -16,6 +16,7 @@ dependencies:
   flame_audio: ^2.11.11
   flame_texturepacker: ^5.0.2
   oxygen: ^0.3.1
+  vector_math: ^2.1.4
 
 dev_dependencies:
   flutter_test:
@@ -24,3 +25,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/images/sprite_sheets/
+    - assets/audio/

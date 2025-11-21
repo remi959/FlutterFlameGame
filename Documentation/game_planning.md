@@ -1,6 +1,6 @@
-# **8-Hour Game Plan — Side-Scrolling Arena Shooter (Flutter + Flame)**
+# **8-Hour Game Plan — Side-Scrolling Shooter (Flutter + Flame)**
 
-## **Scope Summary (Small but Complete)**
+## **Scope Summary**
 
 The game will have:
 
@@ -9,9 +9,8 @@ The game will have:
 * Shooting (projectiles)
 * One enemy type (walks toward player)
 * Simple collisions:
-
-  * projectile → enemy = destroy enemy
-  * enemy → player = lose HP
+  * projectile -> enemy = destroy enemy
+  * enemy -> player = lose HP
 * Game over screen
 * Basic HUD (score + HP)
 * Minimal art (colored boxes or 1 sprite each)
@@ -24,8 +23,8 @@ The game will have:
 | Phase                          | Time      | Notes                              |
 | ------------------------------ | --------- | ---------------------------------- |
 | 1. Setup & project skeleton    | **0.5 h** | Create project, folders, add Flame |
-| 2. Player movement + jump      | **1.5 h** | Basic platformer motion            |
-| 3. Shooting + projectile logic | **1 h**   | Bullet component + firing          |
+| 2. Player movement + jump      | **1 h**   | Basic platformer motion            |
+| 3. Shooting + projectile logic | **1-2 h** | Bullet component + firing          |
 | 4. Enemy creation + AI         | **1.5 h** | Simple walking enemy + spawn timer |
 | 5. Collision system            | **1.5 h** | Bullet hits, player damage         |
 | 6. UI (HUD + Game Over)        | **1 h**   | Score, HP, restart                 |
@@ -33,31 +32,17 @@ The game will have:
 
 ### Total: **8 hours**
 
-This schedule is aggressive but realistic *if you keep assets simple*.
-
 ---
 
 ## **Detailed 8-Hour Plan**
 
 ---
 
-### **Hour 0.0 – 0.5 → Setup & Project Initialization (30 min)**
+### **Setup & Project Initialization**
 
 #### Tasks
 
-* `flutter create`
-* Add Flame + audio deps to `pubspec.yaml`
-* Create folder structure:
-
-  ```
-  lib/
-    game/
-    components/
-    ui/
-  assets/
-  ```
-
-* Add basic assets (colored squares or 1 sprite for player/enemy)
+* Create project files
 * Create `MyGame` class & render a blank background
 
 #### Deliverable
@@ -66,7 +51,7 @@ A running Flame game with an empty screen.
 
 ---
 
-### **Hour 0.5 – 2.0 → Player Movement + Jump (1.5 hours)**
+### **Player Movement + Jump**
 
 #### Tasks
 
@@ -83,9 +68,9 @@ A running Flame game with an empty screen.
   * Jump:
 
     * `velocity.y += gravity * dt`
-    * If on ground → allow jump
+    * If on ground -> allow jump
 * Clamp player to arena boundaries
-* Optional if time: placeholder sprite
+* Optional: placeholder sprite
 
 #### Deliverable
 
@@ -93,11 +78,11 @@ Player can move left/right and jump smoothly.
 
 ---
 
-### **Hour 2.0 – 3.0 → Shooting Mechanic (1 hour)**
+### **Shooting Mechanic**
 
 #### Tasks
 
-* Create `ProjectileComponent`
+* Create `BulletComponent`
 * Fire on button press
 * Add bullets to game
 * Move bullets horizontally
@@ -109,7 +94,7 @@ Player shoots visible projectiles.
 
 ---
 
-### **Hour 3.0 – 4.5 → Enemy System (1.5 hours)**
+### **Enemy System**
 
 #### Tasks
 
@@ -124,7 +109,7 @@ Enemies spawn and move toward player.
 
 ---
 
-### **Hour 4.5 – 6.0 → Collisions + Game Logic (1.5 hours)**
+### **Collisions + Game Logic**
 
 #### Tasks
 
@@ -135,8 +120,8 @@ Enemies spawn and move toward player.
   * Projectiles
 * Implement collision callbacks:
 
-  * Projectile hits enemy → enemy removed, score++
-  * Enemy hits player → HP--
+  * Projectile hits enemy -> enemy removed, score++
+  * Enemy hits player -> HP--
 
 #### Deliverable
 
@@ -144,7 +129,7 @@ Full gameplay loop: fight enemies and survive.
 
 ---
 
-### **Hour 6.0 – 7.0 → UI (HUD + Game Over) (1 hour)**
+### **UI (HUD + Game Over)**
 
 #### Tasks
 
@@ -160,19 +145,17 @@ Full gameplay loop: fight enemies and survive.
 
 #### Deliverable
 
-Game can be played → died → restarted.
+Game can be played -> died -> restarted.
 
 ---
 
-### **Hour 7.0 – 8.0 → Polish + Testing (1 hour)**
+### **Polish + Testing**
 
-#### Optional polish in this hour
+#### Tasks
 
 * Add simple sound effects (shoot, hit)
-* Add simple visuals (particle when enemy dies)
+* Add simple visuals (particle when enemy is hit)
 * Improve movement feel (tune speed, gravity)
-* Add splash screen or simple main menu
-* Fix collision edge cases
 
 #### Deliverable
 
