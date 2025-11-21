@@ -135,10 +135,12 @@ class MyGame extends Forge2DGame with HasKeyboardHandlerComponents {
 
     audioManager = AudioManager();
     await audioManager.init();
-    audioManager.playMusic('background_music.wav');
 
     // spawn initial wave
     enemySpawnManager.spawnWave(3);
+
+    pauseEngine();
+    overlays.add('StartOverlay');
   }
 
   @override

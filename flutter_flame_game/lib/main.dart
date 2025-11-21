@@ -3,6 +3,7 @@ import 'package:flame/game.dart';
 import 'game/my_game.dart';
 import 'ui/game_over_overlay.dart';
 import 'ui/hud_overlay.dart';
+import 'ui/start_overlay.dart';
 
 void main() {
   runApp(const MainApp());
@@ -21,6 +22,7 @@ class MainApp extends StatelessWidget {
           overlayBuilderMap: {
             'HudOverlay': (context, game) => HudOverlay(game: game as MyGame),
             'GameOverOverlay': (context, game) => GameOverOverlay(game: game as MyGame),
+            'StartOverlay': (context, game) => StartOverlay(game: game as MyGame),
           },
           initialActiveOverlays: const ['HudOverlay'],
         ),
